@@ -4,6 +4,7 @@ import * as rds from '@aws-cdk/aws-rds';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as iam from '@aws-cdk/aws-iam';
+import { LambdaIntegration, RestApi } from '@aws-cdk/aws-apigateway';
 
 export class MyNestJSBackendStack extends cdk.Stack {
   // constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -68,8 +69,8 @@ export class MyNestJSBackendStack extends cdk.Stack {
     // NestJS Lambda Function
     const nestApp = new lambda.Function(this, 'main.ts', {
       runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset('../src'),
-      handler: 'handleRequest',
+      code: lambda.Code.fromAsset('../dist'),
+      handler: 'main.handler',
       environment: {
         DB_HOST: `${process.env.DB_HOST}`,
         DB_USER: `${process.env.DB_USER}`,
@@ -87,5 +88,14 @@ export class MyNestJSBackendStack extends cdk.Stack {
         }),
       ],
     });
+
+    const api = new RestApi(this, 'nestjsAppApi', {
+      deployOptions: {
+        stageName: 'dev',
+      },
+    });
+
+    const apiIntegration = new LambdaIntegration(nestApp);
+    api.root.addMethod('ANY', apiIntegration); // This would route all HTTP methods and paths to your lambda
   }
 }

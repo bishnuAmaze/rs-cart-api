@@ -29,8 +29,8 @@ import { MyNestJSBackendStack } from '../lib/my-app-stack';
 const app = new cdk.App();
 new MyNestJSBackendStack(app, 'MyAppStack', {
   env: {
-    account: '058264555641', // Replace with your AWS account id
-    region: 'us-east-1', // Replace with your desired AWS region
+    account: '058264555641',
+    region: 'us-east-1',
   },
 });
 
