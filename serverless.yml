@@ -1,0 +1,23 @@
+service: serverless-nestjs-rs-cart
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs20.x
+  stage: dev
+functions:
+  main:
+    handler: dist/my-app/src/main
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
